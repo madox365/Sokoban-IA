@@ -3,6 +3,9 @@ import time
 from utils import load_levels, parse_level
 from search import bfs, a_star, heuristic
 from game import SokobanGame
+from state_diagram import SokobanDiagram  # 🔹 usamos clase del diagrama
+from state_diagram import show_sokoban_diagram
+
 
 class SokobanApp:
     def __init__(self, root):
@@ -28,6 +31,8 @@ class SokobanApp:
 
         tk.Button(control_frame, text="Resolver", command=self.run_solver).pack(anchor="w", pady=10)
         tk.Button(control_frame, text="Mostrar pasos", command=self.show_steps).pack(anchor="w", pady=5)
+        self.diagram_btn = tk.Button(control_frame, text="Mostrar Diagrama", command=self.open_diagram_window, state=tk.DISABLED)
+        self.diagram_btn.pack(anchor="w", pady=5)
 
 
         # Etiquetas para métricas
@@ -39,6 +44,13 @@ class SokobanApp:
         # Canvas
         self.canvas_frame = tk.Frame(root)
         self.canvas_frame.pack(side="left")
+
+        ###
+        # Después de crear self.canvas_frame
+        self.diagram_frame = tk.Frame(root)
+        self.diagram_frame.pack(side="right", fill="both", expand=True, padx=5, pady=5)
+        self.state_diagram = None
+        ###
 
         self.game = None  # se inicializará al resolver
         self.solution = None
@@ -65,6 +77,9 @@ class SokobanApp:
             self.solution, self.explored = a_star(self.initial_state, heuristic)
         tiempoEjecucion = time.time() - start_time
 
+        if self.explored:
+            self.diagram_btn.config(state=tk.NORMAL)
+
         # Mostrar métricas
         if self.solution:
             print("Solución encontrada:", self.solution)
@@ -80,6 +95,9 @@ class SokobanApp:
         if self.game:
             if self.game.animation_id: 
                 self.root.after_cancel(self.game.animation_id)
+                ###
+                self.game.animation_id = None
+                ###
             self.game.canvas.destroy()
 
         
@@ -88,6 +106,7 @@ class SokobanApp:
         
         if self.solution:
            self.root.after(100, lambda: self.game.animate_solution(self.initial_state))
+
 
     def show_steps(self):
             """Muestra el paso a paso de la exploración"""
@@ -104,6 +123,24 @@ class SokobanApp:
 
             # Animar exploración
             self.root.after(100, self.game.animate_exploration)
+    
+    def open_diagram_window(self):
+        """Abre una nueva ventana para el diagrama de estados."""
+        if not self.explored:
+            print("Primero resuelve un nivel para generar estados explorados.")
+            return
+
+        diagram_window = tk.Toplevel(self.root)
+        diagram_window.title("Diagrama de Estados")
+
+        # Contenedor para el diagrama
+        diagram_frame = tk.Frame(diagram_window)
+        diagram_frame.pack(fill="both", expand=True)
+
+        # Iniciar la visualización del diagrama
+        show_sokoban_diagram(diagram_frame, self.initial_state, self.explored)
+
+
 
 def main():
     root = tk.Tk()
