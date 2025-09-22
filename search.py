@@ -9,19 +9,21 @@ def bfs(initial_state):
     """Implementación de BFS: encuentra la ruta más corta en número de pasos."""
     frontier = deque([initial_state])
     visited = set([initial_state])
+    explored = []
     
     while frontier:
         state = frontier.popleft()
+        explored.append(state)
 
         if state.is_goal():
-            return state.get_solution_path()
+            return state.get_solution_path(), explored
 
         for neighbor in state.expand():
             if neighbor not in visited:
                 visited.add(neighbor)
                 frontier.append(neighbor)
     
-    return None
+    return None, explored
 
 
 # ============================================================
@@ -38,12 +40,14 @@ def a_star(initial_state, heuristic):
     h0 = heuristic(initial_state)
     heapq.heappush(frontier, (h0, next(counter), initial_state))
     visited = set()
+    explored = []
 
     while frontier:
         f, _, state = heapq.heappop(frontier)
+        explored.append(state)
 
         if state.is_goal():
-            return state.get_solution_path()
+            return state.get_solution_path(), explored
 
         visited.add(state)
 
@@ -54,7 +58,7 @@ def a_star(initial_state, heuristic):
                 f = g + h
                 heapq.heappush(frontier, (f, next(counter), neighbor))
 
-    return None
+    return None, explored
 
 
 

@@ -5,10 +5,12 @@ from state import State
 TILE_SIZE = 50  # tamaño de cada celda en píxeles
 
 class SokobanGame:
-    def __init__(self, root, level, solution=None):
+    def __init__(self, root, level, initial_state, solution=None, exploration = None):
         self.root = root
         self.level = level
+        self.initial_state = initial_state
         self.solution = solution or []
+        self.exploration = exploration or []
         self.step = 0
 
         self.canvas = tk.Canvas(
@@ -67,6 +69,7 @@ class SokobanGame:
             image=self.images["@"], anchor="nw"
         )
 
+    #Muestra la solucion final
     def animate_solution(self, state: State):
         """Ejecuta la solución paso a paso"""
         if self.step >= len(self.solution):
@@ -96,4 +99,16 @@ class SokobanGame:
 
         self.draw_board(next_state)
         self.step += 1
-        self.root.after(500, lambda: self.animate_solution(next_state))
+        self.animation_id  = self.root.after(500, lambda: self.animate_solution(next_state))
+
+    #Muestra todos los estados posibles dependiendo del algoritmo
+    def animate_exploration(self):
+        if self.step < len(self.exploration):
+            state = self.exploration[self.step]
+            self.draw_board(state)
+            self.step += 1
+            self.animation_id = self.root.after(150, self.animate_exploration)
+        else:
+            # Reiniciamos step para la solución
+            self.step = 0
+            self.animate_solution(self.initial_state)
