@@ -138,7 +138,7 @@ class SokobanApp:
         diagram_frame.pack(fill="both", expand=True)
 
         # Iniciar la visualización del diagrama
-        show_sokoban_diagram(diagram_frame, self.initial_state, self.explored)
+        show_sokoban_diagram(diagram_frame, self.initial_state, self.explored, self.algorithm.get())
 
 
 

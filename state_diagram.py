@@ -4,6 +4,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import networkx as nx
 from collections import deque
+from search import heuristic
 
 def build_state_tree(initial_state, explored):
     """Construye un árbol de estados a partir de los estados explorados."""
@@ -21,7 +22,7 @@ def build_state_tree(initial_state, explored):
 
     return tree
 
-def hierarchical_pos(G, root, max_depth=3):
+def hierarchical_pos(G, root, max_depth=5):
     """
     Posición jerárquica para dibujar el árbol limitado a una profundidad.
     Esta función es más robusta y previene KeyErrors.
@@ -63,10 +64,11 @@ def hierarchical_pos(G, root, max_depth=3):
 
 
 class SokobanDiagram:
-    def __init__(self, parent_frame, initial_state, explored, max_depth=3):
+    def __init__(self, parent_frame, initial_state, explored, algorithm, max_depth=5):
         self.parent_frame = parent_frame
         self.initial_state = initial_state
         self.explored = explored
+        self.algorithm = algorithm # 🔹 Nuevo parámetro
         self.max_depth = max_depth
         self.current_step = 0
         self.after_id = None
@@ -76,8 +78,17 @@ class SokobanDiagram:
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         self.full_tree = build_state_tree(self.initial_state, self.explored)
-        self.node_labels = {state: f"P:{state.player}\nB:{len(state.boxes)}" 
-                            for state in self.full_tree.nodes()}
+        
+        # 🔹 Lógica para crear las etiquetas dinámicamente
+        self.node_labels = {}
+        for state in self.full_tree.nodes():
+            if self.algorithm == "A*":
+                g = state.cost
+                h = heuristic(state)
+                f = g + h
+                self.node_labels[state] = f"{state.player}\ng:{g}, h:{h}\nf:{f}"
+            else:
+                self.node_labels[state] = f"{state.player}\n"
         
         # 🔹 Vínculo para detener la animación al cerrar la ventana
         self.parent_frame.bind("<Destroy>", self.stop_animation)
@@ -127,8 +138,8 @@ class SokobanDiagram:
             self.parent_frame.after_cancel(self.after_id)
             self.after_id = None
 
-def show_sokoban_diagram(frame, initial_state, explored):
+def show_sokoban_diagram(frame, initial_state, explored, algorithm):
     """Inicializa y muestra el diagrama, limitado a 3 niveles y jerárquico."""
-    diagram = SokobanDiagram(frame, initial_state, explored, max_depth=3)
+    diagram = SokobanDiagram(frame, initial_state, explored, algorithm, max_depth=5)
     diagram.draw_step()
     return diagram
