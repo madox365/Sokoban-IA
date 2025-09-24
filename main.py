@@ -40,6 +40,8 @@ class SokobanApp:
         self.steps_label.pack(anchor="w", pady=(10,0))
         self.time_label = tk.Label(control_frame, text="Tiempo: -")
         self.time_label.pack(anchor="w")
+        self.states_label = tk.Label(control_frame, text="N° Estados: -")
+        self.states_label.pack(anchor="w")
 
         # Canvas
         self.canvas_frame = tk.Frame(root)
@@ -76,6 +78,7 @@ class SokobanApp:
             print("=== A* ===")
             self.solution, self.explored = a_star(self.initial_state, heuristic)
         tiempoEjecucion = time.time() - start_time
+        n_states = len(self.explored)
 
         if self.explored:
             self.diagram_btn.config(state=tk.NORMAL)
@@ -90,6 +93,7 @@ class SokobanApp:
             self.steps_label.config(text="Pasos: -")
 
         self.time_label.config(text=f"Tiempo: {tiempoEjecucion:.3f} s")
+        self.states_label.config(text=f"N° Estados: {n_states} ")
 
         # Crear o resetear GUI del tablero
         if self.game:
