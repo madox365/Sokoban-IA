@@ -2,7 +2,6 @@ import json
 from state import State
 
 def load_levels(filename="levels.json"):
-    """Carga los niveles desde un archivo JSON."""
     with open(filename, "r") as f:
         levels = json.load(f)
     return levels
@@ -10,7 +9,7 @@ def load_levels(filename="levels.json"):
 
 def parse_level(level):
     """
-    Convierte un nivel (lista de strings) en un State inicial.
+    Convierte un nivel (lista de strings) en un State inicial (saca las posiciones de personaje y entorno).
     Ejemplo de nivel:
     [
         "#########",
@@ -37,5 +36,5 @@ def parse_level(level):
                 player = (x, y)
                 goals.add((x, y))
     
-    # Crear el estado inicial
+    # Crear y retornar el estado inicial
     return State(player, boxes, goals, level)

@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from state import State
 
-TILE_SIZE = 50  # tamaño de cada celda en píxeles
+TILE_SIZE = 50  # tamaño pixel
 
 class SokobanGame:
     def __init__(self, root, level, initial_state, solution=None, exploration = None):

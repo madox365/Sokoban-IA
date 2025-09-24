@@ -3,7 +3,7 @@ import time
 from utils import load_levels, parse_level
 from search import bfs, a_star, heuristic
 from game import SokobanGame
-from state_diagram import SokobanDiagram  # 🔹 usamos clase del diagrama
+from state_diagram import SokobanDiagram  
 from state_diagram import show_sokoban_diagram
 
 
@@ -54,12 +54,13 @@ class SokobanApp:
         self.state_diagram = None
         ###
 
-        self.game = None  # se inicializará al resolver
+        self.game = None 
         self.solution = None
         self.explored = None
         self.initial_state = None
         self.speed = 200
 
+    # Resolver dado el nivel y el algoritmo
     def run_solver(self):
         level_index = self.current_level_index.get()
         level = self.levels[level_index]
@@ -83,7 +84,7 @@ class SokobanApp:
         if self.explored:
             self.diagram_btn.config(state=tk.NORMAL)
 
-        # Mostrar métricas
+        # Mostrar métricas si encontramos solucion
         if self.solution:
             print("Solución encontrada:", self.solution)
             print("Longitud:", len(self.solution))
@@ -99,7 +100,7 @@ class SokobanApp:
         if self.game:
             if self.game.animation_id: 
                 self.root.after_cancel(self.game.animation_id)
-                ###
+                ### ver
                 self.game.animation_id = None
                 ###
             self.game.canvas.destroy()
@@ -111,7 +112,7 @@ class SokobanApp:
         if self.solution:
            self.root.after(100, lambda: self.game.animate_solution(self.initial_state))
 
-
+    # Mostrar paso  a paso la solucion
     def show_steps(self):
             """Muestra el paso a paso de la exploración"""
             if not self.game or not self.explored:
@@ -128,6 +129,7 @@ class SokobanApp:
             # Animar exploración
             self.root.after(100, self.game.animate_exploration)
     
+    #Ejecutar el diagrama de estados
     def open_diagram_window(self):
         """Abre una nueva ventana para el diagrama de estados."""
         if not self.explored:
@@ -137,7 +139,7 @@ class SokobanApp:
         diagram_window = tk.Toplevel(self.root)
         diagram_window.title("Diagrama de Estados")
 
-        # Contenedor para el diagrama
+        # Contenedor para el diagrama de estados
         diagram_frame = tk.Frame(diagram_window)
         diagram_frame.pack(fill="both", expand=True)
 

@@ -70,7 +70,7 @@ class State:
                 new_boxes.remove(new_player)
                 new_boxes.add(new_box)
 
-                # 💀 chequeo de deadlock
+                # Chequeo de deadlocks  -> por ejemplo cajas en esquinas
                 if self.is_deadlock(new_boxes):
                     continue
 
